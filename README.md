@@ -1,3 +1,10 @@
+## Note
+This is a fork of the original repo, with the intention of making it compile on my (arm64) Mac, and it seems to work fine now.
+I have compiled grit and wav2agb to run natively (also available in forks on my Github page), but mid2agb is a closed source program, so that is run through wine.
+
+## Prerequisites:
+* Wine: `brew install --cask --no-quarantine wine-stable`
+
 # Complete Fire Red Upgrade
 
 ## What is this?
