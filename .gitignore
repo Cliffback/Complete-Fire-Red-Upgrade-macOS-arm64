@@ -27,3 +27,10 @@ Cover Art.png
 
 # pycache files
 *.pyc
+
+# macOS specific files
+.DS_Store
+
+# vscode files
+.vscode/*
+*.code-workspace
