@@ -64,7 +64,8 @@ AUDIO = './audio'
 BUILD = './build'
 IMAGES = './Images'
 ASFLAGS = ['-mthumb', '-I', ASSEMBLY]
-LDFLAGS = ['BPRE.ld', '-T', 'linker.ld']
+# --no-warn-rwx-segments added to avoid warning regarding rw permission for linker.o
+LDFLAGS = ['BPRE.ld', '-T', 'linker.ld', '--no-warn-rwx-segments']
 CFLAGS = ['-mthumb', '-mno-thumb-interwork', '-mcpu=arm7tdmi', '-mtune=arm7tdmi',
           '-mno-long-calls', '-march=armv4t', '-Wall', '-Wextra', '-Os', '-fira-loop-pressure', '-fipa-pta']
 
@@ -144,7 +145,8 @@ def MakeOutputImageFile(assemblyFile: str) -> [str, bool]:
 
 def MakeOutputAudioFile(assemblyFile: str) -> [str, bool]:
     """Return "SND_" + hash of filename to use as object filename."""
-    objectFile = os.path.join(BUILD, 'SND_' + assemblyFile.split("Wav_")[1].split(".s")[0] + '.o')
+    objectFile = os.path.join(
+        BUILD, 'SND_' + assemblyFile.split("Wav_")[1].split(".s")[0] + '.o')
     return CreateOutputFile(assemblyFile, objectFile)
 
 
@@ -191,7 +193,8 @@ def DoMiddleManAssembly(originalFile: str, assemblyFile: str, flagFile: str, fla
                     break
 
         if flags != [] and lineToChange != '' and '-G' in flags:
-            ChangeFileLine(assemblyFile, counter, lineToChange + flags[flags.index('-G') + 1] + '\n')
+            ChangeFileLine(assemblyFile, counter, lineToChange +
+                           flags[flags.index('-G') + 1] + '\n')
 
     regenerateObjectFile = func(assemblyFile)[1]
     if regenerateObjectFile is False:
@@ -366,7 +369,8 @@ def RunGlob(globString: str, fn) -> map:
             return map(fn, files)
 
         except TypeError:
-            print('Error compiling. Please make sure Python has been updated to the latest version.')
+            print(
+                'Error compiling. Please make sure Python has been updated to the latest version.')
             sys.exit(1)
     else:
         files = Path(directory).glob(globString)
@@ -377,13 +381,13 @@ def main():
     Master.init()
     startTime = datetime.now()
     globs = {
-            '**/*.s': ProcessAssembly,
-            '**/*.c': ProcessC,
-            '**/*.string': ProcessString,
-            '**/*.png': ProcessImage,
-            '**/*.bmp': ProcessImage,
-            '**/*.wav': ProcessAudio,
-            '**/*.mid': ProcessMusic,
+        '**/*.s': ProcessAssembly,
+        '**/*.c': ProcessC,
+        '**/*.string': ProcessString,
+        '**/*.png': ProcessImage,
+        '**/*.bmp': ProcessImage,
+        '**/*.wav': ProcessAudio,
+        '**/*.mid': ProcessMusic,
     }
 
     if sys.version_info.major >= 3 and sys.version_info.minor >= 8:
@@ -412,10 +416,12 @@ def main():
         if not os.path.isfile('build/special_inserts.bin') \
                 or os.path.getmtime('build/special_inserts.bin') < os.path.getmtime('special_inserts.asm'):
             print('Assembling special_inserts.asm')
-            cmd = [AS] + ASFLAGS + ['-c', 'special_inserts.asm', '-o', 'build/special_inserts.o']
+            cmd = [AS] + ASFLAGS + ['-c', 'special_inserts.asm',
+                                    '-o', 'build/special_inserts.o']
             RunCommand(cmd)
 
-            cmd = [OBJCOPY, '-O', 'binary', 'build/special_inserts.o', 'build/special_inserts.bin']
+            cmd = [OBJCOPY, '-O', 'binary', 'build/special_inserts.o',
+                   'build/special_inserts.bin']
             RunCommand(cmd)
 
     print('Built in ' + str(datetime.now() - startTime) + '.')
